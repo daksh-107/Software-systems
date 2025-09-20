@@ -1,47 +1,38 @@
-/************************** 
-Name: q22.c
-Author: Daksh Minda
-Description: Program where parent and child processes print messages 
-             in sequence using fork() and wait().
+/*
+============================================================================
+Name : q22.c
+Author : Daksh Minda
+Description : Write a program, open a file, call fork, and then write to the file by both the child as well as the parent processes. Check output of the file
 Date: 03/09/2025
-********************************************************************/
+============================================================================
+*/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/wait.h>
-
-int main() {
-    pid_t processResult;
-    int childStatus;
-
-    processResult = fork();
-
-    if (processResult < 0) {
-        perror("fork fail");
-        exit(1);
-    }
-    else if (processResult == 0) {
-      
-        printf("Msg from Child: Hello I am the child process\n");
-        sleep(1);
-        printf("Msg Child: Done with the task.\n");
-    }
-    else {
-        
-        wait(&childStatus); 
-        printf("Msg from Parent: Child has finished\n");
-        printf("Msg from Parent: bye\n");
-    }
-
-    return 0;
+#include <unistd.h>    	
+#include <sys/types.h> 	
+#include <sys/stat.h>  	
+#include <fcntl.h>     	
+#include <stdio.h> 	
+int main(int argc, char *argv[]){
+	if(argc < 2){
+		perror("Enter File Name\n");
+		return 0;
+	}
+	int fd;
+	if((fd = open(argv[1],O_RDWR | O_CREAT | O_APPEND)) == -1){
+		perror("FD\n");
+		return 0;
+	}
+	if(fork()){
+		write(fd,"PARENT\n",7);
+	}else{
+		write(fd,"CHILD\n",6);
+	}
+	close(fd);
+	return 0;
 }
-
-/************************ Sample Output ******************************
-$ ./q22
-Msg from Child: Hello I am the child process
-Msg Child: Done with the task.
-Msg from Parent: Child has finished
-Msg from Parent: bye
-*********************************************************************/
+/*
+cat b.txt 
+PARENT
+CHILD
+*/
 
