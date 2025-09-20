@@ -1,41 +1,41 @@
-/************************** 
-Name:q20.c 
-Author: Daksh Minda
-Description: Program to measure the execution time of getppid() system call 
-             using CPU time stamp counter (RDTSC).
-Date: 02/09/2025
-********************************************************************/
+/*
+============================================================================
+Name : q20.c
+Author : Daksh Minda
+Description :  Find out the priority of your running program. Modify the priority with nice command.
+Date: 01/09/2025
+============================================================================
+*/
 
 #include <stdio.h>
 #include <unistd.h>
-#include <stdint.h>
+#include <sys/resource.h>
+#include <errno.h>
 
-static __inline__ unsigned long long readClockCounter(void) {
-    unsigned highBits, lowBits;
-    __asm__ volatile ("rdtsc" : "=a"(lowBits), "=d"(highBits));
-    return ((unsigned long long)lowBits) | (((unsigned long long)highBits) << 32);
-}
+int main()
+{
+    int initial_priority;
+    initial_priority = getpriority(PRIO_PROCESS, 0);
+    printf("Current process priority (niceness) is: %d\n", initial_priority);
 
-int main() {
-    unsigned long long cycleS, cycleE;
-    pid_t parentID;
-
-    cycleS = readClockCounter();
-
-    parentID = getppid();  
-
+    int niceness_to_add = 10;
     
-    cycleE = readClockCounter();
+    errno = 0;
+    nice(niceness_to_add);a
 
-    printf("Parent process id: %d\n", parentID);
-    printf("Cycles taken by getppid: %llu\n", (cycleE - cycleS));
+    if (errno != 0) {
+        perror("Error setting new priority");
+        return 1;
+    }
 
+    int updated_priority;
+    updated_priority = getpriority(PRIO_PROCESS, 0);
+    printf("New process priority (niceness) is: %d\n", updated_priority);
     return 0;
 }
-
-/************************ Sample Output ******************************
-$ ./q20
-Parent process id: 396
-Cycles taken by getppid: 10336
-*********************************************************************/
+/*
+Output:
+Current process priority (niceness) is:0
+New process priority (niceness) is: 10
+*/
 
