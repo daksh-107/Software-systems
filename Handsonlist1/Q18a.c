@@ -1,7 +1,7 @@
 /*
 ============================================================================
-Name : Q18.c
-Author : Rohit Bansal
+Name : Q18a.c
+Author : Daksh Minda
 Description : Write a program to perform Record locking.
 a. Implement write lock
 b. Implement read lock
@@ -24,7 +24,7 @@ struct record
 
 int main()
 {
-    int fd = open("/home/rohit-bansal/Q18main.txt", O_RDWR);
+    int fd = open("q18test.txt", O_RDWR);
     struct flock wrlock = {F_WRLCK, SEEK_SET, 0, sizeof(struct record), getpid()};
     int record_id;
     printf("Enter record id:");
